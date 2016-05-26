@@ -1,0 +1,85 @@
+<link rel="import" href="../../polymer/polymer.html" >
+
+<dom-module id="esri-layer">
+  <template>
+    <style>
+    </style>
+  </template>
+
+  <script>
+    require([
+      "esri/layers/FeatureLayer",
+      "esri/layers/MapImageLayer"
+    ],
+    function(FeatureLayer, MapImageLayer) {
+      Polymer({
+        is: 'esri-layer',
+        properties: {
+          url : {
+            type : String,
+            value : "",
+          },
+          layertype:{
+            type: String,
+            value: "",
+          },
+          layer:{
+            type: Object,
+            value: undefined,
+            observer: "_layerInitialized",
+          },
+          map:{
+            type: Object,
+            value: undefined,
+            observer: "_mapChanged",
+          },
+          added:{
+            type: Boolean,
+            value: false,
+          }
+        },
+        _mapChanged: function(){
+          this._addLayerToMap();
+        },
+        _layerInitialized: function(){
+          this._addLayerToMap();
+        },
+        _addLayerToMap: function(){
+          if(this.map && this.layer && !this.added){
+            this.map.add(this.layer);
+            this.added = true;
+          }
+        },
+        created: function(){
+          //console.log('esri-layer created');
+        },
+        ready:function(){
+          //console.log('esri-layer ready');
+        },
+        attached: function() {
+          //console.log('esri-layer attached');
+          this.layer = this.startLayer();
+        },
+        startLayer: function(){
+          switch(this.layertype){
+            case "feature-layer":
+              var featureLayer = new FeatureLayer({
+                url: this.url
+              });
+              return featureLayer;
+            case "map-image-layer":
+              var mapImageLayer = new MapImageLayer({
+                url: this.url
+              });
+              return mapImageLayer;
+            //Todo another layer type
+            default:
+              return null;
+          }
+          return null;
+        },
+      });   
+    });
+  </script>
+
+</dom-module>

@@ -1,0 +1,104 @@
+<link rel="import" href="../../polymer/polymer.html">
+
+<dom-module id="esri-map">
+  <template>
+    <style>
+      #esrimap {
+        width: 100%;
+        height: 100%;
+      }
+    </style>
+    
+    <div id="esrimap"></div>
+    <content id="layers" select="esri-layer"></content>
+  </template>
+
+  <script>
+    require([
+      "esri/Map",
+      "esri/views/MapView"
+    ],
+    function(Map, MapView) {
+      Polymer({
+        is: 'esri-map',
+        properties: {
+          basemap : {
+              type : String,
+              value : "streets",
+          },
+          latitude:{
+              type : Number,
+              value : 15,
+          },
+          longitude:{
+              type : Number,
+              value : 65,
+          },
+          zoom:{
+            type: Number,
+            value: 4
+          },
+          map:{
+            type: Object,
+            value: undefined,
+          },
+          mapView:{
+            type: Object,
+            value: undefined,
+          },
+          layers:{
+            type: Array,
+            value: [],
+          },
+        },
+        created: function(){
+          //console.log('esri-map created');
+        },
+        ready:function(){
+          //console.log('esri-map ready');
+        },
+        attached: function() {
+          //console.log('esri-map attached');
+          this._initEsriMap();
+        },
+        _addConfiguredLayers: function(){
+          var lyrs = Array.prototype.slice.call(
+            Polymer.dom(this.$.layers).getDistributedNodes()
+            );
+           this.layers = lyrs;
+           this._setMapToLayers(this.layers);
+        },
+        _setMapToLayers: function(layers) {
+          if (this.map) {
+            for (var i = 0, layer; layer = layers[i]; ++i) {
+              layer.map = this.map;
+            }
+          }
+        },
+        _initEsriMap: function(){
+          this.map = new Map({
+            basemap: this.basemap
+          });
+          this.mapView = new MapView({
+            container: "esrimap", 
+            map: this.map,
+            zoom: this.zoom,
+            center: [this.longitude, this.latitude]
+          });
+          
+          var basemapLoadedEv = this.mapView.on('layerview-create', function(ev){
+            //console.log('view with basemap loaded, adding configured layers');
+            basemapLoadedEv.remove();
+            this._addConfiguredLayers();
+          }.bind(this));
+        },
+        addEsriMapEventListener: function(){
+          this.mapView.on('click', function(e){
+            this.fire('esri-map-click', e);
+          }.bind(this));
+        },
+      });   
+    });
+  </script>
+
+</dom-module>

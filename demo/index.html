@@ -1,0 +1,42 @@
+<!doctype html>
+<html>
+  <head>
+    <script src="../../webcomponentsjs/webcomponents-lite.js"></script>
+    <link rel="stylesheet" href="https://js.arcgis.com/4.0/esri/css/main.css">
+    <script src="https://js.arcgis.com/4.0/"></script>
+    <script>
+      
+    </script>
+    <style>
+      :host {
+        
+      }
+      html, body{
+        padding: 0px;
+        margin: 0px;
+        width: 100%;
+        height: 100%;
+      }
+      esri-map {
+        width: 100%;
+        height: 100%;
+      }
+    </style>
+    <link rel="import" href="../components/esri-map.html">
+    <link rel="import" href="../components/esri-layer.html">
+  </head>
+  <body>
+    <esri-map basemap="osm" latitude=-17 longitude=-64 zoom=3>
+      <esri-layer url="https://sampleserver6.arcgisonline.com/arcgis/rest/services/DamageAssessment/FeatureServer/0" layertype="feature-layer"></esri-layer>
+      <esri-layer url="https://sampleserver6.arcgisonline.com/arcgis/rest/services/Notes/FeatureServer/0" layertype="feature-layer"></esri-layer>
+    </esri-map>
+    
+    <script>
+      var map = document.querySelector('esri-map'); 
+      map.addEventListener('esri-map-click', function (e) {
+        //testing click event
+      });
+      
+    </script>
+  </body>
+</html>
